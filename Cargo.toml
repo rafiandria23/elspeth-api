@@ -1,0 +1,30 @@
+[package]
+name = "elspeth-api"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+actix = { version = "0.13.5" }
+actix-web = { version = "4.15.0" }
+config = { version = "0.15.25" }
+diesel = { version = "2.3.13", features = ["postgres", "r2d2", "time"] }
+dotenvy = { version = "0.15.7" }
+futures = { version = "0.3.34" }
+jsonwebtoken = { version = "11.0.0", features = ["aws_lc_rs"] }
+opentelemetry = { version = "0.32.0" }
+opentelemetry-otlp = { version = "0.32.0", features = [
+  "grpc-tonic",
+  "reqwest-client",
+] }
+opentelemetry_sdk = { version = "0.32.1", features = ["rt-tokio"] }
+r2d2 = { version = "0.8.10" }
+redis = { version = "1.7.0", features = ["connection-manager", "tokio-comp"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.151" }
+thiserror = { version = "2.0.20" }
+time = { version = "0.3.55", features = ["formatting", "serde"] }
+tokio = { version = "1.53.1" }
+tracing = { version = "0.1.44" }
+tracing-actix-web = { version = "0.7.22" }
+tracing-opentelemetry = { version = "0.33.0" }
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "json"] }
