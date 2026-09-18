@@ -1,7 +1,7 @@
-use opentelemetry::{global, trace::TracerProvider as _};
+use opentelemetry::trace::TracerProvider as _;
 use opentelemetry_otlp::{SpanExporter, WithExportConfig};
 use opentelemetry_sdk::{Resource, propagation::TraceContextPropagator, trace::SdkTracerProvider};
-use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::{
     config::{OtlpProtocol, TelemetryConfig},
@@ -13,16 +13,16 @@ pub struct ApiTelemetry {
 }
 
 impl ApiTelemetry {
-    pub fn init(config: TelemetryConfig) -> Result<Self> {
+    pub fn init(config: &TelemetryConfig) -> Result<Self> {
         let service_name = config.resolved_service_name();
         let otlp_endpoint = config.resolved_otlp_endpoint();
         let otlp_protocol = config.resolved_otlp_protocol();
 
-        global::set_text_map_propagator(TraceContextPropagator::new());
+        opentelemetry::global::set_text_map_propagator(TraceContextPropagator::new());
 
         let env_filter =
             EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
-        let fmt_layer = fmt::layer().with_target(true);
+        let fmt_layer = tracing_subscriber::fmt::layer().with_target(true);
         let registry = tracing_subscriber::registry()
             .with(env_filter)
             .with(fmt_layer);
@@ -53,7 +53,7 @@ impl ApiTelemetry {
                 .build();
 
             let tracer = provider.tracer(service_name);
-            global::set_tracer_provider(provider.clone());
+            opentelemetry::global::set_tracer_provider(provider.clone());
 
             let otel_layer = tracing_opentelemetry::layer().with_tracer(tracer);
             registry

@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::core::error::Result;
+use crate::core::error::{ApiError, Result};
 
 //
 // API configurations
@@ -61,6 +61,9 @@ pub struct DatabaseConfig {
     pub password: Option<String>,
 
     pub name: String,
+
+    pub pool_max_size: Option<u32>,
+    pub pool_min_idle: Option<u32>,
 }
 
 impl Default for DatabaseConfig {
@@ -73,6 +76,9 @@ impl Default for DatabaseConfig {
             password: None,
 
             name: "elspeth".into(),
+
+            pool_max_size: None,
+            pool_min_idle: None,
         }
     }
 }
@@ -105,6 +111,30 @@ impl DatabaseConfig {
         url.push_str(&self.port.to_string());
 
         url
+    }
+
+    pub fn resolved_pool_max_size(&self) -> u32 {
+        self.pool_max_size.unwrap_or_else(|| {
+            let cores = std::thread::available_parallelism()
+                .map(|c| c.get() as u32)
+                .unwrap_or(12);
+
+            cores * 2
+        })
+    }
+
+    pub fn resolved_pool_min_idle(&self) -> Result<u32> {
+        let max = self.resolved_pool_max_size();
+        let min = self.pool_min_idle.unwrap_or(max);
+
+        if min > max {
+            return Err(ApiError::Config(config::ConfigError::Message(format!(
+                "Invalid database pool configuration: DATABASE__POOL_MIN_IDLE ({min}) \
+                cannot exceed DATABASE__POOL_MAX_SIZE ({max})"
+            ))));
+        }
+
+        Ok(min)
     }
 }
 
@@ -293,7 +323,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn load(&self) -> Result<Self> {
+    pub fn load() -> Result<Self> {
         dotenvy::dotenv().ok();
 
         let api_mode = std::env::var("API__MODE").unwrap_or_else(|_| "development".into());

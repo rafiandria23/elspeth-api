@@ -10,19 +10,31 @@ pub type DatabaseConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
 #[derive(Clone)]
 pub struct DatabasePool {
-    inner: Pool<ConnectionManager<PgConnection>>,
+    pool: Pool<ConnectionManager<PgConnection>>,
 }
 
 impl DatabasePool {
     pub fn new(config: &DatabaseConfig) -> Result<Self> {
-        let manager = ConnectionManager::<PgConnection>::new(&config.url());
-        let inner = Pool::builder().max_size(120).build(manager)?;
+        let max_size = config.resolved_pool_max_size();
+        let min_idle = config.resolved_pool_min_idle()?;
 
-        Ok(Self { inner })
+        let manager = ConnectionManager::<PgConnection>::new(&config.url());
+        let pool = Pool::builder()
+            .max_size(max_size)
+            .min_idle(Some(min_idle))
+            .build(manager)?;
+
+        tracing::info!(
+            pool_max_size = max_size,
+            pool_min_idle = min_idle,
+            "Database connection pool initialized"
+        );
+
+        Ok(Self { pool })
     }
 
     pub fn get(&self) -> Result<DatabaseConnection> {
-        let conn = self.inner.get()?;
+        let conn = self.pool.get()?;
 
         Ok(conn)
     }

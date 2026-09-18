@@ -3,6 +3,7 @@ use config::ConfigError;
 use diesel::result::Error as DieselError;
 use r2d2::Error as ConnectionPoolError;
 use redis::RedisError;
+use std::io::Error as IoError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -18,6 +19,9 @@ pub enum ApiError {
 
     #[error("Database error: {0}")]
     Database(#[from] DieselError),
+
+    #[error("I/O error: {0}")]
+    Io(#[from] IoError),
 
     #[error("Redis error: {0}")]
     Redis(#[from] RedisError),
