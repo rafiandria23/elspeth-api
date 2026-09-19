@@ -7,9 +7,17 @@ edition = "2024"
 actix = { version = "0.13.5" }
 actix-web = { version = "4.15.0" }
 config = { version = "0.15.25" }
-diesel = { version = "2.3.13", features = ["postgres", "r2d2", "time"] }
+diesel = { version = "2.3.13", features = [
+  "network-address",
+  "postgres",
+  "r2d2",
+  "serde_json",
+  "time",
+  "uuid",
+] }
 dotenvy = { version = "0.15.7" }
 futures = { version = "0.3.34" }
+ipnetwork = { version = "0.21.1", features = ["serde"] }
 jsonwebtoken = { version = "11.0.0", features = ["aws_lc_rs"] }
 opentelemetry = { version = "0.32.0" }
 opentelemetry-otlp = { version = "0.32.0", features = [
@@ -28,3 +36,4 @@ tracing = { version = "0.1.44" }
 tracing-actix-web = { version = "0.7.22" }
 tracing-opentelemetry = { version = "0.33.0" }
 tracing-subscriber = { version = "0.3.23", features = ["env-filter", "json"] }
+uuid = { version = "1.26.1", features = ["serde", "v7"] }

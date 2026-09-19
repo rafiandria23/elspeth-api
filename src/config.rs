@@ -2,9 +2,9 @@ use serde::Deserialize;
 
 use crate::core::error::{ApiError, Result};
 
-//
+// =============================================================================
 // API configurations
-//
+// =============================================================================
 
 #[derive(Debug, Default, Clone, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -47,9 +47,9 @@ impl Default for ApiConfig {
     }
 }
 
-//
+// =============================================================================
 // Database configurations
-//
+// =============================================================================
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default)]
@@ -138,9 +138,9 @@ impl DatabaseConfig {
     }
 }
 
-//
+// =============================================================================
 // JWT configurations
-//
+// =============================================================================
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default)]
@@ -160,9 +160,9 @@ impl Default for JwtConfig {
     }
 }
 
-//
+// =============================================================================
 // Redis configurations
-//
+// =============================================================================
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default)]
@@ -224,9 +224,9 @@ impl RedisConfig {
     }
 }
 
-//
+// =============================================================================
 // Telemetry configurations
-//
+// =============================================================================
 
 #[derive(Debug, Default, Clone, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -307,9 +307,9 @@ impl Default for WebConfig {
     }
 }
 
-//
+// =============================================================================
 // Configuration loader
-//
+// =============================================================================
 
 #[derive(Debug, Default, Clone, Deserialize)]
 #[serde(default)]
